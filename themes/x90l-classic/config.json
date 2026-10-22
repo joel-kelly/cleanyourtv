@@ -1,0 +1,37 @@
+{
+  "dock_apps": [
+    "com.netflix.ninja",
+    "com.amazon.amazonvideo.livingroom",
+    "com.disney.disneyplus",
+    "com.google.android.youtube.tv",
+    "ca.bellmedia.cravetv",
+    "ca.cbc.android.cbctv",
+    "com.apple.atve.sony.appletv",
+    "com.plexapp.android"
+  ],
+  "hidden_apps": [
+    "com.sony.dtv.tvx",
+    "com.android.vending",
+    "com.sony.dtv.livingfit",
+    "com.sony.dtv.notificationcenter",
+    "com.sony.dtv.timers",
+    "com.gathin.tvhome"
+  ],
+  "app_library": true,
+  "dock_row": false,
+  "columns": 4,
+  "background_color": "#000000",
+  "wallpaper": false,
+  "ambient_glow": true,
+  "app_glow": false,
+  "glow_style": "radial",
+  "dock_title": true,
+  "icon_only_buttons": true,
+  "wifi_label_width": 0,
+  "focus_overshoot": false,
+  "home_idle_clock_minutes": 0,
+  "glow_color": "#E6AA00",
+  "show_greeting": false,
+  "focus_highlight": "none",
+  "advanced_effects": true
+}

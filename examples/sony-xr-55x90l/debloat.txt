@@ -1,0 +1,72 @@
+# Sony BRAVIA XR-55X90L (2023, device BRAVIA_VH22, MediaTek), Canada
+# Google TV 12 (API 31), build BRAVIA_VH22_M_UC-user 12 STT2.230505.001.S136 682241
+#
+# Apply:   powershell -ExecutionPolicy Bypass -File tools\disable.ps1 -TvHost <tv ip> examples\sony-xr-55x90l\debloat.txt
+# Undo:    powershell -ExecutionPolicy Bypass -File tools\restore.ps1 -TvHost <tv ip> examples\sony-xr-55x90l\debloat.txt
+# Everything is DISABLED, not uninstalled. Comment out any line you want to keep.
+#
+# Based on examples/sony-kd-65x82l (same firmware build, UC instead of PA region).
+# Kept by owner's choice: Chromecast (mediashell), AirPlay/HomeKit, and the Living Decor art
+# screensaver (com.sony.dtv.livingfit, the active screensaver_components) which the X82L list disables.
+# Apps in use: Netflix, Prime Video, Disney+, Crave, CBC Gem, Apple TV, YouTube, Plex.
+# Kept as unclear: com.sony.dtv.sensingfusionservice, com.sony.dtv.frame.
+# Remote: app buttons, gear (settings_key_scancodes [646], HOME_KEY_SERVICE=1), Input and Google TV button all
+# confirmed working with launcherx disabled.
+# Live TV / input app: com.sony.dtv.tvx. Keep tvinput.*, braviasync*, tvapi, sonysystemservice, imeproxy,
+# irblaster/irbservice and all com.mediatek.*.
+
+# Batch 1: tracking, ads, demo mode
+tv.samba.ssm                      # Samba TV fingerprints what's on screen
+tv.samba.ssm.ui
+com.sonyericsson.idd.agent        # Sony IDD usage-data agent
+com.sony.dtv.usercontext          # user context providers
+com.qterics.da.product            # Qterics device agent
+com.sony.dtv.da.service           # remote-support session service
+com.google.android.feedback
+com.sony.dtv.promos
+com.sony.dtv.sonyselect           # Sony Select app recommendations
+com.sony.dtv.sonytab              # Sony content tab / partner rows
+com.sony.dtv.demosupport
+com.sony.dtv.demosystemsupport
+com.sony.dtv.multiscreendemo
+com.vewd.core.service             # Vewd
+
+# Batch 2: Sony extras the owner doesn't use
+com.google.android.play.games
+com.sony.dtv.seeds.iot            # Sony smart-home / phone-app link (BRAVIA Connect)
+com.sony.dtv.seeds.iot.remotestart
+com.sony.dtv.seeds.auth
+com.sony.dtv.helpguidecontents
+com.sony.dtv.smarthelp
+com.sony.dtv.ecodashboard
+com.sony.dtv.distancealert        # BRAVIA CAM (optional accessory) features
+com.sony.dtv.gestureapp
+com.sony.dtv.sensingcamera.settings
+com.sony.dtv.sensingcamera.fwupdate
+com.sonypicturescore              # Sony Pictures Core
+com.sony.dtv.smartmediaapp        # USB media player
+com.sony.dtv.osat.music           # Sony music player
+
+# Batch 3: Google Assistant / voice (owner doesn't use it) and streaming apps not in use
+com.google.android.katniss        # Google Assistant / voice search
+com.sony.dtv.assistantadapter
+com.sony.dtv.voicesearch
+com.sony.dtv.voicerecognitionconfirmation
+com.google.android.youtube.tvmusic
+com.google.android.youtube.tvkids
+com.google.android.videos         # Google TV movies & shows
+com.crunchyroll.crunchyroid
+com.spotify.tv.android
+com.dazn
+com.cbs.ca                        # Paramount+
+com.tubitv
+com.discovery.discoveryplus.androidtv
+
+# Batch 4: Sony firmware updates (owner's choice; re-enable these two to update)
+com.sony.dtv.systemupdate
+com.sony.dtv.update
+
+# Batch 5: Google TV setup wizard, which also claims HOME (RecoveryActivity) and keeps Home away from
+# the new launcher. It owned the saved Wi-Fi network here, so the network was forgotten and re-joined
+# in Settings first.
+com.google.android.tungsten.setupwraith

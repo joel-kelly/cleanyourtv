@@ -160,6 +160,15 @@ final class Config {
     final boolean wallpaperCaptions;
     /** Answer VIEW_INPUTS with the Inputs menu (handle_view_inputs); see InputsRequestActivity. */
     final boolean handleViewInputs;
+    /** glow_color: one fixed colour for the ambient glow instead of each app's own; 0 keeps the per-app colour. */
+    int glowColor;
+    /** show_greeting: the time-of-day greeting above the clock (true by default). */
+    boolean showGreeting = true;
+    /** focus_highlight: "spring" (the glass slides between tiles), "fade" (it appears on the new tile), "none". */
+    String focusHighlight = FOCUS_SPRING;
+    static final String FOCUS_SPRING = "spring";
+    static final String FOCUS_FADE = "fade";
+    static final String FOCUS_NONE = "none";
 
     private Config(List<String> dockApps, boolean fillDock, List<String> hiddenApps, String liveTvPackage,
                    String liveTvAction, String liveTvInputId, Map<String, String> launchActions, Map<String, String> appLabels,
@@ -308,6 +317,9 @@ final class Config {
         boolean keyFilter = res.getBoolean(R.bool.key_filter);
         boolean dockGlass = res.getBoolean(R.bool.dock_glass);
         String glowStyle = res.getString(R.string.glow_style);
+        int glowColor = 0;
+        boolean showGreeting = true;
+        String focusHighlight = FOCUS_SPRING;
         boolean applied = false;
 
         File dir = dir(ctx);
@@ -371,6 +383,10 @@ final class Config {
             keyFilter = bool(json, "key_filter", keyFilter);
             dockGlass = bool(json, "dock_glass", dockGlass);
             glowStyle = string(json, "glow_style", glowStyle);
+            glowColor = color(json, "glow_color", glowColor);
+            showGreeting = bool(json, "show_greeting", showGreeting);
+            String fh = string(json, "focus_highlight", focusHighlight);
+            if (FOCUS_FADE.equals(fh) || FOCUS_NONE.equals(fh)) focusHighlight = fh;
         }
         // A theme push or reset invalidates choices made on the TV. On first use, remember the
         // current theme without clearing choices from an older launcher version.
@@ -423,7 +439,7 @@ final class Config {
         Festival festival = json == null ? Festival.NONE : Festival.parse(string(json, "festival", ""),
                 string(json, "festival_until", ""), string(json, "greeting", ""), string(json, "accent_color", ""));
 
-        return new Config(dock, fillDock, hidden, liveTv, liveTvAction, liveTvInputId, packageMap(launchActions), packageMap(appLabels),
+        Config cfg = new Config(dock, fillDock, hidden, liveTv, liveTvAction, liveTvInputId, packageMap(launchActions), packageMap(appLabels),
                 packageMap(appBanners), panelService,
                 panelAction, panelExtra, coocaaSources, inputAction, inputUriScheme,
                 Math.max(1, columns), Math.max(0, rowsBelow), animations, advancedEffects,
@@ -432,6 +448,10 @@ final class Config {
                 wallpapers, rotationMinutes, wallpaperDim, dockOpacity, wallpaperOrder, applied,
                 festival, inputKeycodes, appKeys, stockHomeRedirect, json == null ? Collections.emptyList() : raceCalendar(json), cinematic, ambientGlow, appGlow,
                 Math.max(0, idleClockMinutes), keyFilter, dockGlass, glowStyle, wallpaperCaptions, handleViewInputs);
+        cfg.glowColor = glowColor;
+        cfg.showGreeting = showGreeting;
+        cfg.focusHighlight = focusHighlight;
+        return cfg;
     }
 
     /**

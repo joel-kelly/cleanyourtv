@@ -98,6 +98,9 @@ is ignored, and a file that doesn't parse is ignored as a whole, so a theme can 
 | `dock_glass` | bool | The dock band as light frosted glass like the top bar's pills (`false` by default); suits `sky_intensity` or a wallpaper, where the solid band reads as a dark slab |
 | `ambient_glow` | bool | The glow behind the dock in the focused app's colour (`true` by default); `false` keeps only `background_color` or the wallpaper, e.g. for a calm photo background |
 | `app_glow` | bool | The focus highlight glows in the focused app's colour on every tile, as `cinematic_home` does for the dock (`false` by default) |
+| `glow_color` | `#RRGGBB` | One fixed colour for the ambient glow on every tile, so it no longer changes (or animates) with the focused app; unset follows each app |
+| `show_greeting` | bool | The time-of-day greeting above the clock (`true` by default); `false` hides it |
+| `focus_highlight` | `spring`, `fade` or `none` | The glass highlight: slides between tiles (`spring`, default), appears on the new tile without travelling (`fade`), or is not drawn at all (`none`; pair with `advanced_effects` so the focused tile lifts) |
 
 ## Wallpapers
 

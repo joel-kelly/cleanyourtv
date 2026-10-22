@@ -140,6 +140,10 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
     private boolean ambientGlow;
     /** config.xml app_glow: the highlight takes the focused app's colour on every tile. */
     private boolean appGlow;
+    /** glow_color from the theme: the glow keeps this one colour on every tile; 0 follows each app. */
+    private int fixedGlow;
+    /** focus_highlight from the theme: Config.FOCUS_SPRING, FOCUS_FADE or FOCUS_NONE. */
+    private String focusHighlight = Config.FOCUS_SPRING;
     /** config.xml glow_style: the shape setAmbient paints the glow mask in. */
     private String glowStyle;
     private ImageView heroArt;
@@ -379,6 +383,9 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         ambientGlow = cfg.ambientGlow;
         appGlow = cfg.appGlow;
         if (!ambientGlow) ambient.setVisibility(View.GONE);
+        fixedGlow = cfg.glowColor;
+        focusHighlight = cfg.focusHighlight;
+        if (Config.FOCUS_NONE.equals(focusHighlight)) glass.setVisibility(View.GONE);
         heroName = findViewById(R.id.heroName);
         hero = findViewById(R.id.hero);
         // The hero is now a group (name, and the cinematic lines): without this every fade of the default
@@ -396,6 +403,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         greeting = findViewById(R.id.greeting);
         clockBlock = findViewById(R.id.leftBlock);
         greetingColor = greeting.getCurrentTextColor();
+        if (!cfg.showGreeting) greeting.setVisibility(View.GONE);
         btnWifi = findViewById(R.id.btnWifi);
         shamsiDate = findViewById(R.id.shamsiDate);
         stats = findViewById(R.id.stats);
@@ -1369,6 +1377,14 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
             springY.cancel();
             glass.setTranslationX(x);
             glass.setTranslationY(y);
+        } else if (Config.FOCUS_FADE.equals(focusHighlight)) {
+            springX.cancel();
+            springY.cancel();
+            glass.animate().cancel();
+            glass.setAlpha(0f);
+            glass.setTranslationX(x);
+            glass.setTranslationY(y);
+            glass.animate().alpha(1f).setDuration(reducedMotion ? 0 : 160).start();
         } else {
             springX.animateToFinalPosition(x);
             springY.animateToFinalPosition(y - glassScrollShift);
@@ -1416,7 +1432,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
 
     private void showHero(int position, float dockTopInRoot) {
         String label = adapter.labelAt(position);
-        int color = adapter.ambientColorAt(position);
+        int color = glowColorAt(position);
         float y = dockTopInRoot - 14 * density - 26 * density - hero.getHeight();
         boolean changed = !label.contentEquals(heroName.getText());
         if (cinematic) showHeroArt(position);
@@ -1602,6 +1618,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
      * over the screen is one texture. It is painted once in white and tinted with the app's colour,
      * so changing apps neither repaints it on the CPU (about 11 ms) nor uploads it again.
      */
+    /** The ambient glow's colour for a tile: the theme's fixed glow_color, or the app's own colour. */
+    private int glowColorAt(int position) {
+        return fixedGlow != 0 ? fixedGlow : adapter.ambientColorAt(position);
+    }
+
     private void setAmbient(int color) {
         if (color == ambientColor && ambient.getBackground() != null) return;
         ambientColor = color;
@@ -1677,7 +1698,7 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
      * name above the dock does not show (every grid tile has its name underneath).
      */
     private void showGlowOnly(int position) {
-        int color = adapter.ambientColorAt(position);
+        int color = glowColorAt(position);
         stopAmbientAnimation();
         hero.animate().cancel();
         ambient.animate().cancel();
@@ -1711,11 +1732,11 @@ public class MainActivity extends Activity implements AppAdapter.TileListener {
         heroShown = false;
         if (animations && !reducedMotion) {
             hero.animate().alpha(0f).setDuration(160).start();
-            if (ambientGlow) ambient.animate().alpha(0f).setDuration(300).start();
+            if (ambientGlow && fixedGlow == 0) ambient.animate().alpha(0f).setDuration(300).start();
             heroArt.animate().alpha(0f).setDuration(300).start();
         } else {
             hero.setAlpha(0f);
-            ambient.setAlpha(0f);
+            if (fixedGlow == 0) ambient.setAlpha(0f);
             heroArt.setAlpha(0f);
         }
     }
